@@ -58,21 +58,32 @@ jan90NC = crop(jan90, counties_geog)
 plot(jan90NC)
 plot(counties_geog,add=T)
 
+years = 1991:1992
+
 #for loop to read in all the files
-for(y in c(1991:2014)){
+output = matrix(NA, nrow = nrow(counties_geog@data), ncol = length(years))
+
+for(y in years){
   filenames.y<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, "0", 1:4, "_bil.bil", sep="")
   filenames.prevy<-paste("C:/Users/lhamon/Documents/temp/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, "0", 9, "_bil.bil", sep="")
   filenames.prevy2<-paste("C:/Users/lhamon/Documents/temp/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, 10:12, "_bil.bil", sep="")
   filenames=c(filenames.y,filenames.prevy, filenames.prevy2)
-  tmean<-stack(filenames)
-  plot(tmean)
-  tempmean = extract(jan90NC, counties_geog, fun=mean)
-  tempmean[counties_geog@data$NAME == 'ORANGE']
-  head(tempmean)
-  print(tempmean)
+  temp_allmonths<-stack(filenames)
+  tmean = calc(temp_allmonths, mean)
+  tempmean = extract(tmean, counties_geog, fun=mean)
+  output[,which(years==y)] = tempmean
 }  
 
-##perhaps learn how to store this info
+output1 = data.frame(output)
+names(output1) = years
+output2 = cbind(counties_geog@data$NAME[2:nrow(output1)], output1[2:nrow(output1),])
+names(output2)[1] = "county"
 
 
+#plots year as x-axis and average over the 8 months as y axis
+plot(years, output2[1,2:ncol(output2)], type = 'l', xlab = "Year", 
+     ylab = "Mean temperature", ylim = c(5, 20))
+points(years, output2[2, 2:ncol(output2)], type = 'l', col = 'red')
 
+sapply(3:nrow(output2), function(x) 
+  points(years, output2[x, 2:ncol(output2)], type = 'l'))
