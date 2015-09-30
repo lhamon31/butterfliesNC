@@ -130,7 +130,15 @@ write.csv(MyData, file = "ncbutterfly.tenpercent.summary.9.29.2015.csv")
 #subsetting papilio glaucus
 papilio<-MyData[890:911,3]
 
+##########################################################################################
+##COMBINE THE VARIABLES AND GRAPH
+papilio<-cbind(NCtempmean,earlydate)
 
+#plots temperature das x-axis and first flight as y
+fit<-lm(papilio)
+summary(fit)
+plot(papilio, xlab = " Mean temperature", ylab = "julian")
+abline(lm(papilio))
 
 
 
