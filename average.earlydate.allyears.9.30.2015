@@ -8,5 +8,8 @@ alldat<-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/ncbutterfly.tenpe
 #mean early date for each species
 mean.earlydate<-aggregate(alldat[,4], list(alldat$species), mean)
 
-#translating earlydate to month?? how to add to script and standardize
+#translating earlydate (julian)
+mean.month<-month(strptime(paste(mean.earlydate[,2]),format="%j")) #converts julian date to numberical month 
+mean.month<-as.data.frame(mean.month) #converts to data frame
+month.list<-cbind(mean.earlydate,mean.month) 
  
