@@ -75,7 +75,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
   # the arrival month for species s
   for(y in years){
     filenames.y<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText1, "_bil.bil", sep="")
-    filenames.prevy <-filenames<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y-1, monthsText2, "_bil.bil", sep="")
+    filenames.prevy <-filenames<- paste("C:/Users/lhamon/Documents/temp/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, monthsText2, "_bil.bil", sep="")
     filenames = c(filenames.y, filenames.prevy)
     temp_allmonths<-stack(filenames)
     tmean = calc(temp_allmonths, mean)
