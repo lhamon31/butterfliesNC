@@ -44,22 +44,38 @@ mean.month<-month(strptime(paste(mean.earlydate[,2]),format="%j"))
 mean.earlydate$arrivalMonth = mean.month
 
 #############################################################################
-
+species = unique(mean.earlydate$species)
 years = 1993:2014
 
 #for loop to read in all the files
-output = matrix(NA, nrow = nrow(NC_geog@data), ncol = length(years))
+output = array(NA, dim = nrow(NC_geog@data), length(years), length(species))
 
-for(y in years){
-  filenames.y<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, "0", 1:4, "_bil.bil", sep="")
-  filenames.prevy<-paste("C:/Users/lhamon/Documents/temp/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, "0", 9, "_bil.bil", sep="")
-  filenames.prevy2<-paste("C:/Users/lhamon/Documents/temp/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, 10:12, "_bil.bil", sep="")
-  filenames=c(filenames.y,filenames.prevy, filenames.prevy2)
-  temp_allmonths<-stack(filenames)
-  tmean = calc(temp_allmonths, mean)
-  tempmean = extract(tmean, NC_geog, fun=mean)
-  output[,which(years==y)] = tempmean
-}  
+# Specify months of climate data to get
+numMonths = 8 # You can change this here if you decide to use a longer or shorter window
+
+for (s in species) { # add a species loop to pull out species-specific arrival month
+  arrivMonth = mean.earlydate$arrivalMonth[mean.earlydate$species == s]
+  monthsToGet = max(1, (arrivMonth - (numMonths - 1))):arrivMonth
+  if (arrivMonth < numMonths) {
+    monthsToGet2 = (arrivMonth + (12 - numMonths + 1)):12
+    monthsToGet = c(monthsToGet, monthsToGet2)
+  }
+  monthsText = sapply(monthsToGet, function(x) {
+    if (nchar(monthsToGet)[monthsToGet == x] == 1) { paste("0", x, sep = "") 
+    } else if (nchar(monthsToGet)[monthsToGet == x] == 2) { paste(x) }})
+  
+  # Now you should have a character string of months that you want to extract
+  # called monthsText that would look like c("09", "10", "11", "12", "01", "02", ...)
+    
+  # Get temperature data across years for the 8-month period up to and including
+  # the arrival month
+  for(y in years){
+    filenames<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText, "_bil.bil", sep="")
+    temp_allmonths<-stack(filenames)
+    tmean = calc(temp_allmonths, mean)
+    tempmean = extract(tmean, NC_geog, fun=mean)
+    output[, which(years==y), which(species==s)] = tempmean
+  }  
 
 output1 = data.frame(output)
 names(output1) = years
