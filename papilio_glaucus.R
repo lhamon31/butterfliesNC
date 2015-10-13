@@ -25,6 +25,26 @@ jan90NC = crop(jan90, NC_geog)
 plot(jan90NC)
 plot(NC_geog,add=T)
 
+#############################################################################
+#create list of 'species' with 'month of arrival' for subsequent analysis
+# Load libraries
+library(lubridate)
+
+# Loading full dataset
+alldat<-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/ncbutterfly.tenpercent.summary.9.29.2015.csv")
+
+#mean early date for each species
+mean.earlydate<-aggregate(alldat[,4], list(alldat$species), mean, na.rm=T)
+names(mean.earlydate) = c('species', 'julianday')
+
+#converts julian date to numerical month 
+mean.month<-month(strptime(paste(mean.earlydate[,2]),format="%j")) 
+
+#adds arrivalMonth to mean.earlydate dataframe
+mean.earlydate$arrivalMonth = mean.month
+
+#############################################################################
+
 years = 1993:2014
 
 #for loop to read in all the files
