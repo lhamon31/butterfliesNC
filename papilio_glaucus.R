@@ -48,43 +48,48 @@ species = unique(mean.earlydate$species)
 years = 1993:2014
 
 #for loop to read in all the files
-output = array(NA, dim = nrow(NC_geog@data), length(years), length(species))
+output = data.frame(county = character(),
+                    species = character(),
+                    year = integer(),
+                    temp = numeric())
 
 # Specify months of climate data to get
 numMonths = 8 # You can change this here if you decide to use a longer or shorter window
 
 for (s in species) { # add a species loop to pull out species-specific arrival month
   arrivMonth = mean.earlydate$arrivalMonth[mean.earlydate$species == s]
-  monthsToGet = max(1, (arrivMonth - (numMonths - 1))):arrivMonth
+  monthsToGet1 = max(1, (arrivMonth - (numMonths - 1))):arrivMonth
   if (arrivMonth < numMonths) {
     monthsToGet2 = (arrivMonth + (12 - numMonths + 1)):12
-    monthsToGet = c(monthsToGet, monthsToGet2)
   }
-  monthsText = sapply(monthsToGet, function(x) {
-    if (nchar(monthsToGet)[monthsToGet == x] == 1) { paste("0", x, sep = "") 
-    } else if (nchar(monthsToGet)[monthsToGet == x] == 2) { paste(x) }})
+  monthsText1 = paste("0", monthsToGet1, sep = "")
+  monthsText2 = sapply(monthsToGet2, function(x) {
+    if (nchar(monthsToGet2)[monthsToGet2 == x] == 1) { paste("0", x, sep = "") 
+    } else if (nchar(monthsToGet2)[monthsToGet2 == x] == 2) { paste(x) }})
   
   # Now you should have a character string of months that you want to extract
-  # called monthsText that would look like c("09", "10", "11", "12", "01", "02", ...)
-    
+  # called monthsText1 which are the early months in the year c("01", "02", "03", ...)
+  # and monthsText2 which are the later months, e.g., c("09", "10", "11", "12").
+  
   # Get temperature data across years for the 8-month period up to and including
-  # the arrival month
+  # the arrival month for species s
   for(y in years){
-    filenames<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText, "_bil.bil", sep="")
+    filenames.y<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText1, "_bil.bil", sep="")
+    filenames.prevy <-filenames<- paste("C:/Users/lhamon/Documents/temp/", y, "/PRISM_tmean_stable_4kmM2_", y-1, monthsText2, "_bil.bil", sep="")
+    filenames = c(filenames.y, filenames.prevy)
     temp_allmonths<-stack(filenames)
     tmean = calc(temp_allmonths, mean)
     tempmean = extract(tmean, NC_geog, fun=mean)
-    output[, which(years==y), which(species==s)] = tempmean
-  }  
+    tempoutput = data.frame(county = NC_geog@data$NAME, species = s, year = y, temp = tempmean)
+    output = rbind(output, tempmean)
+  } # end of year loop
+} # end of species loop
 
-output1 = data.frame(output)
-names(output1) = years
-output2 = cbind(NC_geog@data$NAME[2:nrow(output1)], output1[2:nrow(output1),])
-names(output2)[1] = "state"
+# The output dataframe has 4 columns: the county name, species name, year, and mean temperature
+# for that 8-month window for that year.
 
-#change 'output 1' to be a vector 
-cbind(output1)#cbind the years
-NCtempmean<-data.frame(colMeans(output1,na.rm=T)) #mean each column using colmeans, with na.rm=T
+
+#NCtempmean<-data.frame(colMeans(output1,na.rm=T)) #mean each column using colmeans, with na.rm=T
 #NCmean is a list, with the avg temp listed for each year. I want to now add the first flight date for each year and add it to this list
 
 ########################################################################################3333
