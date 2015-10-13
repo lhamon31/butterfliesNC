@@ -81,7 +81,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
     tmean = calc(temp_allmonths, mean)
     tempmean = extract(tmean, NC_geog, fun=mean)
     tempoutput = data.frame(county = NC_geog@data$NAME, species = s, year = y, temp = tempmean)
-    output = rbind(output, tempmean)
+    output = rbind(output, tempoutput)
   } # end of year loop
 } # end of species loop
 
