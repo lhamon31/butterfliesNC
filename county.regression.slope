@@ -53,12 +53,19 @@ tempdata<-read.csv("C:/Users/lhamon/Documents/Biology/BIOL 395H/temp.data.bycoun
 #merge the temperature data with the calculated earlydates
 county.fulldat<-merge(tempdata, wm, by.x = c('county','year'), by.y =c('county','year'), all.x = T, all.y = T) #county.fulldat includes "county", "year", "species", "temp" and "earlydate". It has 2583 rows.
 
+#remove rows w/ NA from county.fulldat
+row.has.na <- apply(county.fulldat, 1, function(x){any(is.na(x))})
+sum(row.has.na)
+county.clean <-county.fulldat[!row.has.na,]
 
 ##GENERATE AN OUTPUT OF SPECIES SLOPES FOR EACH COUNTY##
 #subset county.fulldat by county for individual analysis
-buncombe.dat<-subset(county.fulldat, county=="Buncombe")
-wake.dat<-subset(county.fulldat, county=="Wake")
-pitt.dat<-subset(county.fulldat, county=="Pitt")
+buncombe.dat<-subset(county.clean, county=="Buncombe")
+
+wake.dat<-subset(county.clean, county=="Wake")
+
+pitt.dat<-subset(county.clean, county=="Pitt")
+
 
 # output1:Buncombe
 output1 = data.frame(species = character(),
@@ -68,16 +75,17 @@ output1 = data.frame(species = character(),
 
 species<-unique(buncombe.dat$species)
 
-for (s in species) {
+for (s in species){
   df<-buncombe.dat[buncombe.dat$species==s,]
   lm.sub<-lm(df$earlydate~df$temp)
-  slope<-summary(lm.sub)$coefficients[2,1]
+  slope<-summary(lm.sub)$coefficients[2, 1]
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
-  tempoutput<- data.frame(species = s, slope = slope, rsquared = rsquared,
-                          pvalue = pvalue)
+  tempoutput<-data.frame(species=s, slope= slope, rsquared= rsquared, pvalue= pvalue)
   output1<-rbind(output1,tempoutput)
 }
+
+write.csv(output1, file="C:/Users/lhamon/Documents/Biology/BIOL 395H/buncombe.output.11.10.2015.csv")
 
 #output2: Wake
 output2 = data.frame(species = character(),
@@ -85,34 +93,26 @@ output2 = data.frame(species = character(),
                      rsquared = numeric(),
                      pvalue = numeric())
 
-species<-unique(wake.dat$species)
+species<-unique(wake.dat$species) 
 
-for (s in species) {
+for (s in species){
   df<-wake.dat[wake.dat$species==s,]
   lm.sub<-lm(df$earlydate~df$temp)
   slope<-summary(lm.sub)$coefficients[2,1]
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
-  tempoutput<- data.frame(species = s, slope = slope, rsquared = rsquared,
-                          pvalue = pvalue)
+  tempoutput<-data.frame(species=s, slope= slope, rsquared= rsquared, pvalue= pvalue)
   output2<-rbind(output2,tempoutput)
 }
 
+write.csv(output2, file="C:/Users/lhamon/Documents/Biology/BIOL 395H/wake.output.11.10.2015.csv")
+
 #output3: Pitt
+#version of pitt.dat with species with only one entry (interferes with regression) removed 
+pitt.dat<-read.csv("C:/Users/lhamon/Documents/Biology/BIOL 395H/pitt.dat.csv")
 output3 = data.frame(species = character(),
                      slope = numeric(),
                      rsquared = numeric(),
                      pvalue = numeric())
 
 species<-unique(pitt.dat$species)
-
-for (s in species) {
-  df<-wake.dat[wake.dat$species==s,]
-  lm.sub<-lm(df$earlydate~df$temp)
-  slope<-summary(lm.sub)$coefficients[2,1]
-  rsquared<-summary(lm.sub)$r.squared
-  pvalue<-summary(lm.sub)$coefficients[2,4]
-  tempoutput<- data.frame(species = s, slope = slope, rsquared = rsquared,
-                          pvalue = pvalue)
-  output3<-rbind(output3,tempoutput)
-}
