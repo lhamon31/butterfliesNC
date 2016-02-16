@@ -44,7 +44,7 @@ dateXpct.ind = function(data, pct) {
 for (s in species){
   for (p in province){
     for (y in year){
-      b=subset(alldat,year==y, province==p & species==s)
+      b=subset(alldat,year==y & species==s & province==p)
       mindate<-dateXpct.ind(b,0.10)
       datoutput = data.frame(species = s, province=p,year = y, julian=mindate)
       output=rbind(output,datoutput)
