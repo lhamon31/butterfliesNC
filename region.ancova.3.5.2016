@@ -20,9 +20,12 @@ coast<-coast[-c(874:896), ]
 piedmont$I1 <- rep(0,nrow(piedmont))
 #mountains: 1
 mountains$I1 <- rep(1,nrow(mountains))
+#coast:1
+coast$I1<-rep(1,nrow(coast))
 
-#rbind the 3 data sets
+#rbind the 2 data sets
 fulldat<-rbind(piedmont,mountains)
+fulldat<-rbind(piedmont,coast)
 
 #create empty dataframe
 output = data.frame(species=character(),
@@ -40,6 +43,15 @@ for (s in species) {
   beta.output<- data.frame(species = s, beta1=beta1, beta3=beta3)
   output<-rbind(output,beta.output)
 }
+
+#number significant for slope (β)
+p.beta3<-subset(output, output$beta3<0.05)
+#10/63 slopes are significantly different b/w the mountains and the piedmont
+#1/63 slopes significantly different b/w the coast and the piedmont
+#report the above numbers
+#report the direction of the above numbers
+#report the proportions of pos to neg slopes between the 3  regions 
+#using the histogram.slope script.
 
 ###notes:
 #"If β1 turns out to be close to 0,
