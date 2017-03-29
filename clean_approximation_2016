@@ -51,6 +51,12 @@ ncb2015=read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/approxim
 #combine 2016 and full datasets
 fulldat<-rbind(ncb2015,ncb)
 
+#add species names
+speciesnames<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/species list 2017.csv")
+
+#merge fulldat and species names 
+dat<-merge(fulldat,speciesnames, by=c("Cname"))
+
 #write dataset which includes data through 2016
 write.csv(fulldat,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/approximation_thru_2016.csv")
 
