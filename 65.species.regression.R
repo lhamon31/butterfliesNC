@@ -1,5 +1,7 @@
 #####LOADING SPATIAL DATA, CHECKING MAP PROJECTIONS
 
+#make some crazy edits
+
 setwd("~/temp")
 files=list.files()
 library(raster)
