@@ -1,19 +1,22 @@
 #merging the full dataset and the calculated earlydate/temp values (without province for now)
 setwd("~/Documents/Biology/BIOL 692H")
 library(plyr)
-tempdat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/10.percent.fulldat.1.24.2016.csv")
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
 tempdat<-na.omit(tempdat)
 
 #merge 2: adding the variables in (this bypasses an issue created by the provinces)
 variables<-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/Laura's data and scripts/NCbutterflies.65species.June2015.csv")
+variables<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/species list 2017.csv")
 
 drop<-c("Cname","county","observer","number","comments","month", "day","dateCalc","province","coid","julian","voltinismnotes","dietnotes")
 drop2<-which(names(variables) %in% drop)
 variables1<-variables[,-drop2]
 
 variables2<- unique(variables1[,1:7])
+variables2<- unique(variables1[,1:6])
 names(variables2)[names(variables2)=="sciName"] <- "species"
 dat<-merge(variables2,tempdat, by.x=c("species","year"),by.y=c('species','year'), all.x = T, all.y = T)
+dat<-merge(variables2,tempdat, by.x=c("species"),by.y=c('species'), all.x = T, all.y = T)
 
 # Subsetting data for observations made between 1990 to 2013
 dat<-subset(dat, year > 1989)
@@ -43,6 +46,7 @@ library(MuMIn)
 #fit all subsets of full model
 fullmod_dredge<-dredge(fullmod)
 
+#fit all subsets of full model
 list.good<-get.models(fullmod_dredge, subset = delta < 7)
 model1<-model.avg(list.good)
 summary(model1) #returns relative 
