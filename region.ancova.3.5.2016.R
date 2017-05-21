@@ -10,12 +10,14 @@ coast<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coas
 #eliminate species such that only the same species are used in each region
 #namely, the coast doesn't have "Boloria belladona"
 #and the mountains hates its one "Papilio palamedes"
-mountains<-mountains[-c(161:184, 846),]
-piedmont<-piedmont[-c(183:192,929:938),]
-coast<-coast[-c(874:896), ]
+#not enough data for "Chlosyne nycteis" at coast
+#not enough data for "Lethe anthedon" at coast
+mountains<-mountains[-c(161:184,280:303,636:658,846),]
+piedmont<-piedmont[-c(183:192,310:333,680:698,929:938),]
+coast<-coast[-c(292:293,644:645,874:896), ]
 
 ##Add in appropriate final indicator columns. 
-#I'm gonna try it straight 2-way first.
+#I'm gonna try it 2-way first.
 #piedmont: 0
 piedmont$I1 <- rep(0,nrow(piedmont))
 #mountains: 1
@@ -29,35 +31,61 @@ fulldat<-rbind(piedmont,coast)
 
 #create empty dataframe
 output = data.frame(species=character(),
-                    beta1=numeric(),
-                    beta3 = numeric())
+                    beta2=numeric(),
+                    p.beta2=numeric(),
+                    beta3 =numeric(),
+                    p.beta3=numeric())
 
 species<-unique(fulldat$species)
 
 for (s in species) {
   df<-fulldat[fulldat$species==s,]
-  ancova.test<-lm (log10(earlydate) ~ I1 + log10(year) + log10(year)*I1 , data = df)
+  ancova.test<-lm (earlydate ~ I1 + year + year*I1 , data = df)
   lm.sub<-summary(ancova.test)
-  beta1<-summary(lm.sub)$coefficients[2,4]
-  beta3<-summary(lm.sub)$coefficients[4,4]
-  beta.output<- data.frame(species = s, beta1=beta1, beta3=beta3)
+  beta2<-lm.sub$coefficients[3,1]
+  p.beta2<-lm.sub$coefficients[3,4]
+  beta3<-lm.sub$coefficients[4,1]
+  p.beta3<-lm.sub$coefficients[4,4]
+  beta.output<- data.frame(species = s, beta2=beta2,p.beta2=p.beta2, beta3=beta3, p.beta3=p.beta3)
   output<-rbind(output,beta.output)
 }
 
-#number significant for slope (Î²)
-p.beta3<-subset(output, output$beta3<0.05)
-#10/63 slopes are significantly different b/w the mountains and the piedmont
-#1/63 slopes significantly different b/w the coast and the piedmont
+#beta 2 is slope for piedmont
+#beta 3 is difference in slope
+#reporting actual slope for 2 regions and the p-value
+#histograms of slopes
+#talking about it qualitatively
+
+ok2<-subset(output, output$beta3<0)
+
+#number significant for slope (ß3)
+ok<-subset(output, output$p.beta3<0.05)
+#temperature
+#4/61 slopes significantly different b/w the mountains and the piedmont
+#2/61 slopes significantly different b/w the coast and the piedmont
+#year
+#11/61 slopes significantly different b/w the mountains and the piedmont
+#7/61 slopes significantly different b/w the coast and the piedmont
+
+binom.test(38, 63, 0.5, alternative="greater")
+
+#alternatively
+alldat<-rbind(piedmont,mountains,coast)
+fullmod<- lme(earlydate~province+year+temp+year:province+temp:province, random=~1|species, method="ML", data=alldat)
+summary(fullmod)
+anova(fullmod)
+
+##plan for the paper
 #report the above numbers
 #report the direction of the above numbers
 #report the proportions of pos to neg slopes between the 3  regions 
 #using the histogram.slope script.
 
 ###notes:
-#"If Î²1 turns out to be close to 0,
+#"If ß1 turns out to be close to 0,
 #then we might conclude that the two groups have very similar intercepts"
 
-#"If Î²3 is close to 0,
+#"If ß3 is close to 0,
 #then we might conclude that the two groups have very similar slopes" 
 
 #"Note that the last column labeled  "Pr(>|t|)" 
