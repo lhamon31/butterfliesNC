@@ -3,27 +3,26 @@
 #TO CREATE A NEW DOCUMENT WITH NEW PROXIES WITH WHICH TO RERUN MY ANALYSES
 setwd("~/Documents/Biology/Biol 692H")
 alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/approximation_thru_2016.csv")
 
 #Changing column names to match the 2nd summary dataframe
-colnames(alldat)<-c("Cname", "species", "county", "observer", "number", "comments", "year", "month", "day", "dateCalc", "province", "coid", "julian", "voltinism",
+colnames(alldat)<-c("x","Cname", "species", "county", "observer", "number", "comments", "dateCalc", "year", "julian", "voltinism",
                     "voltinismnotes", "diettype", "dietbreadth", "dietnotes", "migratory", "overwinter")
-alldat<-alldat[c("year","species","province", "number", "julian")]
+alldat<-alldat[c("year","species","number", "julian")]
 
 alldat <-subset(alldat, year > 1989)
 
-alldat$ID<-paste(alldat$species,alldat$year,alldat$province, sep=".")
+alldat$ID<-paste(alldat$species,alldat$year,sep=".")
 
 
 library(dplyr)
 
 # First need to create a vector of dates for individuals
 species<-unique(alldat$species)
-year=1990:2014
-province<-unique(alldat$province)
+year=1990:2016
 
 #create an empty output for the for loop to put values into
 output = data.frame(species=character(),
-                    province=character(),
                     year=integer(),
                     julian=numeric())
 #-------------------------------------------------------
@@ -42,21 +41,22 @@ dateXpct.ind = function(data, pct) {
 
 #for loop to perform this for each species/year 
 for (s in species){
-  for (p in province){
-    for (y in year){
-      b=subset(alldat,year==y & species==s & province==p)
-      mindate<-dateXpct.ind(b,0.10)
-      datoutput = data.frame(species = s, province=p,year = y, julian=mindate)
-      output=rbind(output,datoutput)
-    }
+  for (y in year){
+    b=subset(alldat,year==y & species==s)
+    mindate<-dateXpct.ind(b,0.10)
+    datoutput = data.frame(species = s, year = y, julian=mindate)
+    output=rbind(output,datoutput)
   }
 }
+
+#save output
+write.csv(output, file = "earlydates.thru.2016.csv")
 
 #merge with tempdat 
 tempdat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 395H/full.tempmean.11.10.2015.csv")
 tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 tempjulian <- tempjulian[ -c(3:4)]
-colnames(tempjulian)<-c("species","year","temp","julian")
+colnames(tempjulian)<-c("species","year","temp","earlydate")
 tempjulian<-na.omit(tempjulian)
 
 #remove those values with "inf"
@@ -94,7 +94,7 @@ for (s in species){
 tempdat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 395H/full.tempmean.11.10.2015.csv")
 tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 tempjulian <- tempjulian[ -c(3:4)]
-colnames(tempjulian)<-c("species","year","temp","julian")
+colnames(tempjulian)<-c("species","year","temp","earlydate")
 tempjulian<-na.omit(tempjulian)
 
 #remove those values with "inf"
