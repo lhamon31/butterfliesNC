@@ -39,9 +39,7 @@ ncb$dateCalc<- format(as.Date(ncb$dateCalc), "%m/%d/%Y")
 #rename columns
 colnames(ncb)<-c("Cname","county","observer","number","comments","year","month","day","province","coid","dateCalc","jd")
 ncb<-as.data.frame(ncb)
-#remove incongruent columns (month, day, province, coid)
-drops <- c("month","day","province","coid")
-ncb<-ncb[ , !(names(ncb) %in% drops)]
+
 #rearrange dateCalc
 ncb<-ncb[,c("Cname","county","observer","number","comments","dateCalc","year","jd")]
 
@@ -57,6 +55,13 @@ speciesnames<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/sp
 #merge fulldat and species names 
 dat<-merge(fulldat,speciesnames, by=c("Cname"))
 
-#write dataset which includes data through 2016
-write.csv(fulldat,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/approximation_thru_2016.csv")
+#reorder columns
+colnames(dat)<-c("Cname","county","observer","number","comments","dateCalc","year","jd","species","voltinism","voltinismnotes","diettype","dietbreadth","dietnotes","migratory","overwinter")
+dat2<-dat[,c("Cname", "species", "county","observer","number","comments","dateCalc","year","jd","voltinism","voltinismnotes","diettype","dietbreadth","dietnotes","migratory","overwinter")]
+
+#write dataset
+write.csv(dat2,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/approximation_thru_2016.csv")
+
+
+
 
