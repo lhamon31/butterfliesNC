@@ -1,6 +1,6 @@
 #merging the full dataset and the calculated earlydate/temp values (without province for now)
-setwd("~/Documents/Biology/butterfly paper 2016")
 library(plyr)
+setwd("~/Documents/Biology/butterfly paper 2016")
 tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
 tempdat<-na.omit(tempdat)
 
@@ -11,12 +11,13 @@ drop2<-which(names(variables) %in% drop)
 variables1<-variables[,-drop2]
 variables2<- unique(variables1[,1:6])
 dat<-merge(variables2,tempdat, by.x=c("species"),by.y=c('species'), all.x = T, all.y = T)
+dat<-na.omit(dat)
 
 #setting voltinism as a factor
 dat$voltinism<-as.factor(dat$voltinism)
 
 
-## LOOKING FOR YEAR EFFECT ACROSS ENTIRE DATASET (aka alldat) ##
+## LOOKING FOR YEAR EFFECT ACROSS ENTIRE DATASET (aka dat) ##
 # Required packages
 library(nlme)
 
@@ -29,7 +30,7 @@ anova(fullmod)
 plot.design(julian~year+voltinism+diettype+dietbreadth+overwinter,data=dat)
 
 #in the anova of the full mod,
-#year (p<0.0001), temp (p<0.0001), voltinism (p=0.0024), diettype (p=0.0140), year:voltinism (P=0.0127) were significant
+#year (p<0.0001), temp (p<0.0001), voltinism, diettype significant
 
 ##code bit for model averaging
 # frequentist model selection
