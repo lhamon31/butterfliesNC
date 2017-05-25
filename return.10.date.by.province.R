@@ -58,6 +58,10 @@ for (s in species){
   }
 }
 
+output2<-na.omit(output) #note: many nas where there were not enough data
+write.csv(output2,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
+
+######################################################################################################
 #merge with tempdat 
 tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/full.tempmean.11.10.2015.csv")
 tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
