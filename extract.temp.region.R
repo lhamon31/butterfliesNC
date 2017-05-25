@@ -118,23 +118,23 @@ C.earlydate<-subset(earlydate,province=="C")
 #merge earlydate and tempdat for each region
 M.tempjulian = merge(mountains, M.earlydate, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 M.tempjulian<-na.omit(M.tempjulian)
-M.tempjulian<-M.tempjulian[c("species","year","province.x","temp","earlydate")]
-colnames(M.tempjulian)<-c("species","year","province","temp","earlydate")
+colnames(M.tempjulian)<-c("species","year","province","temp","X","province.y","julian")
+M.tempjulian<-M.tempjulian[c("species","year","province","temp","julian")]
 
 P.tempjulian = merge(piedmont, P.earlydate, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 P.tempjulian<-na.omit(P.tempjulian)
-P.tempjulian<-P.tempjulian[c("species","year","province.x","temp","earlydate")]
-colnames(P.tempjulian)<-c("species","year","province","temp","earlydate")
+colnames(P.tempjulian)<-c("species","year","province","temp","X","province.y","julian")
+P.tempjulian<-P.tempjulian[c("species","year","province","temp","julian")]
 
 C.tempjulian = merge(coast, C.earlydate, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 C.tempjulian<-na.omit(C.tempjulian)
-C.tempjulian<-C.tempjulian[c("species","year","province.x","temp","earlydate")]
-colnames(C.tempjulian)<-c("species","year","province","temp","earlydate")
+colnames(C.tempjulian)<-c("species","year","province","temp","X","province.y","julian")
+C.tempjulian<-C.tempjulian[c("species","year","province","temp","julian")]
 
 #save as csv for each region
-write.csv(M.tempjulian,file="C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/mountain.fulldat.2.24.2016.csv")
-write.csv(P.tempjulian,file="C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/piedmont.fulldat.2.24.2016.csv")
-write.csv(C.tempjulian,file="C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
+write.csv(M.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
+write.csv(P.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.csv")
+write.csv(C.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.csv")
 
 
 
