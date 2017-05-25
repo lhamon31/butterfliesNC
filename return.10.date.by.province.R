@@ -58,15 +58,14 @@ for (s in species){
   }
 }
 
-output2<-na.omit(output) #note: many nas where there were not enough data
-write.csv(output2,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
+output<-na.omit(output) #note: many nas where there were not enough data
+write.csv(output,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
 
-######################################################################################################
 #merge with tempdat 
-tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/full.tempmean.11.10.2015.csv")
-tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
-tempjulian <- tempjulian[ -c(3:4)]
-colnames(tempjulian)<-c("species","year","temp","province","earlydate")
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.by.province.8.months.csv")
+tempjulian = merge(tempdat, output, by.x = c('species','year','county'), by.y =c('species','year','county'), all.x = T, all.y = T)
+tempjulian <- tempjulian[ -c(3:4)] #figure out why it creates many more variables
+colnames(tempjulian)<-c("species","year","temp","province","julian")
 tempjulian<-na.omit(tempjulian)
 
 #remove those values with "inf"
@@ -74,7 +73,7 @@ tempjulian<-do.call(data.frame,lapply(tempjulian, function(x) replace(x, is.infi
 tempjulian<-na.omit(tempjulian) #removes NA values
 
 #create a csv that includes temperature and julian dates
-write.csv(tempjulian, file = "10.percent.by.province.2.17.2016.csv")
+write.csv(tempjulian, "C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/temp.earlydate.by.province.8.months.csv")
 
 #-------------------------------------------------------------------------
 
