@@ -1,22 +1,30 @@
-#FINDING THE 10 % and 25% FLIGHT DATE FOR EACH SPECIES FOR EACH YEAR ***for each region
-setwd("~/Documents/Biology/Biol 692H")
-alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
+#FINDING THE 10 % and 25% FLIGHT DATE FOR EACH SPECIES FOR EACH YEAR
+#AND MERGING THIS WITH THE TEMPERATURE DATA
+#TO CREATE A NEW DOCUMENT WITH NEW PROXIES WITH WHICH TO RERUN MY ANALYSES
+setwd("~/Documents/Biology/butterfly paper 2016")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/approximation_thru_2016.csv")
+
+#adding province labels
+labels <-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/NCbutterflies.65species.June2015.csv")
+labels<-labels[c("county","province")]
+labels<-unique(labels)
+dat<-merge(alldat,labels, by.x=c("county"),by.y=c("county"), all.x = T, all.y = T)
 
 #Changing column names to match the 2nd summary dataframe
-colnames(alldat)<-c("Cname", "species", "county", "observer", "number", "comments", "year", "month", "day", "dateCalc", "province", "coid", "julian", "voltinism",
-                    "voltinismnotes", "diettype", "dietbreadth", "dietnotes", "migratory", "overwinter")
-alldat<-alldat[c("year","species","province","number", "julian")]
-
+colnames(dat)<-c("county","x","Cname","species","observer","number","comments","dateCalc","year","julian",
+                 "voltinism","voltinismnotes","diettype","dietbreadth","dietnotes","migratory","overwinter",
+                 "province")
+alldat<-dat[c("species","year","number", "julian","province")]
 alldat <-subset(alldat, year > 1989)
 
+#create unique ids 
 alldat$ID<-paste(alldat$species,alldat$year,alldat$province, sep=".")
-
 
 library(dplyr)
 
 # First need to create a vector of dates for individuals
 species<-unique(alldat$species)
-year=1990:2014
+year=1990:2016
 province<-unique(alldat$province)
 
 #create an empty output for the for loop to put values into
@@ -51,7 +59,7 @@ for (s in species){
 }
 
 #merge with tempdat 
-tempdat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 395H/full.tempmean.11.10.2015.csv")
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/full.tempmean.11.10.2015.csv")
 tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 tempjulian <- tempjulian[ -c(3:4)]
 colnames(tempjulian)<-c("species","year","temp","province","earlydate")
