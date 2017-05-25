@@ -74,3 +74,4 @@ summary(model2) # returns relative variable importance
 
 #best model
 summary(get.models(bestmod_dredge, 1)[[1]])
+
