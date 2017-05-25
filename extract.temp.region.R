@@ -79,13 +79,10 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.by.province.8.months.csv")
 
 #merge with province labels
-labels <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
-labels<-labels[c("county","province")]
-#note: the above labels are lowercase, and include counties that are further subdivided by region
-#these counties are: burke, harnett, mcdowell, moore, polk, richmond, rutherford, wilkes
-#for now, assigned a singular region based on entity region map. 
-#the following province labels are the ones that have been cleaned up.
-labels<-read.csv("C:/Users/lhamo/Documents/Biology/BIOL 692H/fixing.province.names.2.24.2016.csv")
+    #an issue- in the temperature script, it returns county names in shapefile fomrat, ie "ORANGE" 
+    #in the earlydate script, it returns county names the way they're formatted in the approx. "ie Orange"
+    #solution: in theory u just need to tack on othe earlydate values onto the file created here
+labels <-read.csv("C:/Users/lhamo/Documents/Biology/BIOL 692H/fixing.province.names.2.24.2016.csv")
 dat<-merge(output,labels, by.x=c("county"),by.y=c("county"), all.x = T, all.y = T)
 
 #aggregate data by region
@@ -109,10 +106,9 @@ colnames(coast)<-c("species","province","year","temp")
 #####ADD JULIAN DATE AND MERGE
 
 #load earlydat data. Note that the province labels here are according to their original subdivisions, so that should be changed
-earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
-
-#remove whole-state temperature values
-earlydate<-earlydate[c("species","year","province","earlydate")]
+earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
+earlydate<-do.call(data.frame,lapply(earlydate, function(x) replace(x, is.infinite(x),NA))) #replaces "inf" with "NA"
+earlydate<-na.omit(earlydate) #removes NA values
 
 #subset by province
 M.earlydate<-subset(earlydate,province=="M")
