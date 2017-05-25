@@ -1,20 +1,19 @@
 ##perform ANCOVA to compare mountains, piedmont, coast
 library(plyr)
-setwd("~/Documents/Biology/BIOL 692H")
+setwd("~/Documents/Biology/butterfly paper 2016/data")
 
 #load in data
-mountains<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/mountain.fulldat.2.24.2016.csv")
-piedmont<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/piedmont.fulldat.2.24.2016.csv")
-coast<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
+mountains<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
+piedmont<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.csv")
+coast<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.csv")
 
 #eliminate species such that only the same species are used in each region
 #namely, the coast doesn't have "Boloria belladona"
 #and the mountains hates its one "Papilio palamedes"
 #not enough data for "Chlosyne nycteis" at coast
 #not enough data for "Lethe anthedon" at coast
-mountains<-mountains[-c(161:184,280:303,636:658,846),]
-piedmont<-piedmont[-c(183:192,310:333,680:698,929:938),]
-coast<-coast[-c(292:293,644:645,874:896), ]
+mountains<-mountains[-c(817),]
+coast<-coast[-c(290,291,618:623), ]
 
 ##Add in appropriate final indicator columns. 
 #I'm gonna try it 2-way first.
