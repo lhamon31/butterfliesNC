@@ -76,7 +76,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # for that 8-month window for that year.
 
 #save output from for loop
-write.csv(output, file="C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/tempmean.by.province.2.22.2016.csv")
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.by.province.8.months.csv")
 
 #merge with province labels
 labels <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
@@ -85,7 +85,7 @@ labels<-labels[c("county","province")]
 #these counties are: burke, harnett, mcdowell, moore, polk, richmond, rutherford, wilkes
 #for now, assigned a singular region based on entity region map. 
 #the following province labels are the ones that have been cleaned up.
-labels<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/fixing.province.names.2.24.2016.csv")
+labels<-read.csv("C:/Users/lhamo/Documents/Biology/BIOL 692H/fixing.province.names.2.24.2016.csv")
 dat<-merge(output,labels, by.x=c("county"),by.y=c("county"), all.x = T, all.y = T)
 
 #aggregate data by region
@@ -109,7 +109,7 @@ colnames(coast)<-c("species","province","year","temp")
 #####ADD JULIAN DATE AND MERGE
 
 #load earlydat data. Note that the province labels here are according to their original subdivisions, so that should be changed
-earlydate<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/10.percent.by.province.2.17.2016.csv")
+earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
 
 #remove whole-state temperature values
 earlydate<-earlydate[c("species","year","province","earlydate")]
