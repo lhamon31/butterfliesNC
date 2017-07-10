@@ -29,7 +29,7 @@ plot(NC_geog,add=T)
 #####READING IN ALL APPROPRIATE TEMP FILES AND FINDING NCTEMPMEAN
 
 mean.earlydate<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 395H/mean.arrivalmonth.11.9.2015.csv")
-mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/earlymonth.2016.csv") 
+mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") 
 #it's calculating it for each species for each year for each county
 #i guess my game plan had been to average all this biz over all the counties
 #is that okay though?
@@ -45,13 +45,13 @@ output = data.frame(county = character(),
                     temp = numeric())
 
 # Specify months of climate data to get
-numMonths = 12 # You can change this here if you decide to use a longer or shorter window
+numMonths = 4 # You can change this here if you decide to use a longer or shorter window
 
 for (s in species) { # add a species loop to pull out species-specific arrival month
   arrivMonth = mean.earlydate$arrivalMonth[mean.earlydate$species == s]
   monthsToGet1 = max(1, (arrivMonth - (numMonths - 1))):arrivMonth
   if (arrivMonth < numMonths) {
-    monthsToGet2 = (arrivMonth + (12 - numMonths + 1)):12
+    monthsToGet2 = (arrivMonth + (12 - numMonths + 1)):12 #"'monthsToGet2' not found if" you start with any numMonths that isn't '8'
   }
   monthsText1 = paste("0", monthsToGet1, sep = "")
   monthsText2 = sapply(monthsToGet2, function(x) {
@@ -80,7 +80,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # for that 8-month window for that year.
 
 #save output from for loop
-write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/tempmean.12.months.2016.csv")
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/tempmean.4.months.2016.csv")
 
 #merge with province labels
 labels <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
