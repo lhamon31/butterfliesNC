@@ -5,7 +5,7 @@ setwd("~/Documents/Biology/BIOL 692H")
 
 #loading data. Any fulldat file may be substituted
 #full state
-alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.12.months.NC.2016.csv")
 #regional
 alldat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
 
@@ -22,15 +22,15 @@ alldat<-alldat[-c(292:293,644:645,874:896), ]
 #creating for loop (First I'll just try to get this to read the plots and put them in a pdf)
 
 species<-unique(alldat$species)
-pdf("julian.year.7.10.17.pdf",width=10, height=8)
+pdf("year.julian.12month.2017.pdf",width=10, height=8)
 par(mfrow=c(2,3))
 
 
 for (s in species) {
   df=alldat[alldat$species==s,]
-  lm.sub=lm(df$julian~df$temp,xlab="year", ylab="julian", group=species)
-  plot(df$julian~df$temp, xlab='year', ylab='Early Date (julian)')
-  abline(lm(df$year~df$temp))
+  lm.sub=lm(df$julian~df$year,xlab="year", ylab="julian", group=species)
+  plot(df$julian~df$year, xlab='year', ylab='Early Date (julian)')
+  abline(lm(df$julian~df$year))
   legend("topright", bty="n", legend=paste("R2-",format(summary(lm.sub)$r.squared, digits=4)))
 }
 
@@ -61,17 +61,34 @@ ok1<-subset(output, output$pvalue<0.05)
 ok2<-subset(output,output$slope<0)
 
 hist(output$slope, xlab="Slope (days/year)")
-abline(v=-0.5056615,col="red",lwd=2)
+abline(v=-2.160311,col="red",lwd=2)
+
+library(ggplot2)
 
 histogram1<-ggplot(output, aes(x=slope))+
   geom_histogram(binwidth=0.5)+
-  abline(v=-0.5056615,col="red",lwd=2)+
+  abline(v=-2.160311,col="red",lwd=2)+
   theme_classic()+theme(axis.line=element_line(colour="grey80"),axis.text=element_text(size=18), axis.title=element_text(size=18,face="bold"), title=element_text(size=18,face="bold")) +
-  xlab("Slope (days/year)")
+  xlab("Slope (days/degrees celsius)")
 #aes=aesthetics
 
+#slope proportions whole state, 4 months
+  #year
+    #40/56 negative, 30 significant, mean slope=-0.5056561
+#slope proportions whole state, 6 months
+  #year
+    #40/56 negative, 30 significant, mean slope=-0.5056561 #why are all the slopes coming out the same?
+#slope proportions whole state, 8 months
+  #year
+    #40/56 negative, 14 significant, mean slope= -0.5056561 #and there's such a drop in significance here. something's afoot
+  #temp
+    #37/56 negative, 5 significant, mean slope= -2.1601311
+#slope proportions whole state, 12 months #full temp script generates repeat years w/ different temp dates?
+  #year
+    #40/56 negative, 31 significant, mean slope=-0.5056561
+    
 
-#slope proportions
+#slope proportions regional
   #year
     #piedmont 40/61 negative mean= -0.3091232
     #mountain 51/61 negative mean=-1.455317
