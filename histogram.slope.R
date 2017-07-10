@@ -5,7 +5,7 @@ setwd("~/Documents/Biology/BIOL 692H")
 
 #loading data. Any fulldat file may be substituted
 #full state
-alldat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/10.percent.fulldat.1.24.2016.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
 #regional
 alldat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
 
@@ -22,13 +22,13 @@ alldat<-alldat[-c(292:293,644:645,874:896), ]
 #creating for loop (First I'll just try to get this to read the plots and put them in a pdf)
 
 species<-unique(alldat$species)
-pdf("julian.year.2.28.2016.pdf",width=10, height=8)
+pdf("julian.year.7.10.17.pdf",width=10, height=8)
 par(mfrow=c(2,3))
 
 
 for (s in species) {
   df=alldat[alldat$species==s,]
-  lm.sub=lm(df$earlydate~df$temp,xlab="year", ylab="earlydate", group=species)
+  lm.sub=lm(df$julian~df$temp,xlab="year", ylab="julian", group=species)
   plot(df$julian~df$temp, xlab='year', ylab='Early Date (julian)')
   abline(lm(df$year~df$temp))
   legend("topright", bty="n", legend=paste("R2-",format(summary(lm.sub)$r.squared, digits=4)))
@@ -45,7 +45,7 @@ species<-unique(alldat$species)
 
 for (s in species) {
   df<-alldat[alldat$species==s,]
-  lm.sub<-lm(df$earlydate~df$year)
+  lm.sub<-lm(df$julian~df$year)
   slope<-summary(lm.sub)$coefficients[2,1]
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
