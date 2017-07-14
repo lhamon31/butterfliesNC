@@ -5,7 +5,7 @@ setwd("~/Documents/Biology/BIOL 692H")
 
 #loading data. Any fulldat file may be substituted
 #full state
-alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.12.months.NC.2016.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
 #regional
 alldat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
 

@@ -28,14 +28,9 @@ plot(NC_geog,add=T)
 
 #####READING IN ALL APPROPRIATE TEMP FILES AND FINDING NCTEMPMEAN
 
-mean.earlydate<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 395H/mean.arrivalmonth.11.9.2015.csv")
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") 
-#it's calculating it for each species for each year for each county
-#i guess my game plan had been to average all this biz over all the counties
-#is that okay though?
-#i have the data for doing it just for the state. relevant code is under papilio_glaucus
 species = unique(mean.earlydate$species)
-years = 1990:2016
+years = 1990:2015
 
 
 #for loop to read in all the files
