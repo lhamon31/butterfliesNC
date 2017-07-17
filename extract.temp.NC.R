@@ -1,7 +1,7 @@
 #####LOADING SPATIAL DATA, CHECKING MAP PROJECTIONS
 
 ##x-values- temperature
-setwd("~/temp/1990")
+setwd("~/Biology/butterfly paper 2016/temp data/1990")
 files=list.files()
 library(raster)
 
@@ -30,7 +30,7 @@ plot(NC_geog,add=T)
 
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") 
 species = unique(mean.earlydate$species)
-years = 1990:2015
+years = 2015:2016
 
 
 #for loop to read in all the files
@@ -40,7 +40,7 @@ output = data.frame(county = character(),
                     temp = numeric())
 
 # Specify months of climate data to get
-numMonths = 8 # You can change this here if you decide to use a longer or shorter window
+numMonths = 4 # You can change this here if you decide to use a longer or shorter window
 
 for (s in species) { # add a species loop to pull out species-specific arrival month
   arrivMonth = mean.earlydate$arrivalMonth[mean.earlydate$species == s]
@@ -62,7 +62,8 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
   for(y in years){
     filenames.y<- paste("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText1, "_bil.bil", sep="")
     filenames.prevy <-filenames<- paste("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, monthsText2, "_bil.bil", sep="")
-    filenames = c(filenames.y, filenames.prevy)
+    filenames1 = c(filenames.y, filenames.prevy)
+    filenames <- filenames1[ !grepl("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y, "/PRISM_tmean_stable_4kmM2_", y, "_bil.bil", filenames1) ]
     temp_allmonths<-stack(filenames)
     tmean = calc(temp_allmonths, mean)
     tempmean = extract(tmean, NC_geog, fun=mean)
@@ -75,7 +76,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # for that 8-month window for that year.
 
 #save output from for loop
-write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/tempmean.8.months.2016.csv")
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/tempmean.4.months.2016.csv")
 
 #merge with province labels
 labels <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
