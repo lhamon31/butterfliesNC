@@ -30,7 +30,7 @@ plot(NC_geog,add=T)
 
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") 
 species = unique(mean.earlydate$species)
-years = 2015:2016
+years = 1990:2016
 
 
 #for loop to read in all the files
@@ -40,7 +40,7 @@ output = data.frame(county = character(),
                     temp = numeric())
 
 # Specify months of climate data to get
-numMonths = 4 # You can change this here if you decide to use a longer or shorter window
+numMonths = 8 # You can change this here if you decide to use a longer or shorter window
 
 for (s in species) { # add a species loop to pull out species-specific arrival month
   arrivMonth = mean.earlydate$arrivalMonth[mean.earlydate$species == s]
@@ -76,7 +76,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # for that 8-month window for that year.
 
 #save output from for loop
-write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/tempmean.4.months.2016.csv")
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.8.months.2016.csv")
 
 #merge with province labels
 labels <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
