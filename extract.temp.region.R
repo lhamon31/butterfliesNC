@@ -21,11 +21,10 @@ colnames(labels)<-c("NAME","province")
 counties<-merge(counties,labels, by.x=c("NAME"),by.y=c("NAME"), all.x = T, all.y = T)
 
 #aggregate shapefiles by province
-library(unionSpatialPolygons)
-libs <- c("maptools", "gridExtra")
-lapply(libs, require, character.only = TRUE)
-provinces<- unionSpatialPolygons(counties, id = counties$province)
-province <- unionSpatialPolygons(counties, counties$province)
+library(maptools)
+library(rgeos)
+provinces<- unionSpatialPolygons(counties, counties$province) #I don't have gpclibPermit to do this?
+                                                              #gonna stick with old system for now (see notes below)
 
 #check map projections
 counties_geog = spTransform(counties, crs(jan90))
