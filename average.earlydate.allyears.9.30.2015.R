@@ -1,15 +1,32 @@
 ##SCRIPT TO FIND THE AVERAGE FIRST FLIGHT DATE (ACROSS ALL YEARS) FOR ALL SPECIES
 #will be used to 'walk back' the months for analysis
-setwd("C:/Users/lhamon/Dropbox/NC butterfly project")
+setwd("~/Biology/butterfly paper 2016")
 
 # Loading full dataset
-alldat<-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/ncbutterfly.tenpercent.summary.9.29.2015.csv")
+# Loading full dataset
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
+alldat<- alldat[ -c(1)]
 
-#mean early date for each species
-mean.earlydate<-aggregate(alldat[,4], list(alldat$species), mean)
+#change infs to nas
+is.na(alldat) <- sapply(alldat, is.infinite)
 
-#translating earlydate (julian)
-mean.month<-month(strptime(paste(mean.earlydate[,2]),format="%j")) #converts julian date to numberical month 
-mean.month<-as.data.frame(mean.month) #converts to data frame
-month.list<-cbind(mean.earlydate,mean.month) 
+#mean early date for each species in NC
+mean.earlydate<-aggregate(alldat[,4], list(alldat$species), mean, na.rm=T)
+names(mean.earlydate) = c('species', 'julian')
+#mean early date for species for each province
+mean.earlydate<-aggregate(alldat[,4], list(alldat$species,alldat$province), mean, na.rm=T)
+names(mean.earlydate) = c('species', 'province','earlydate')
+
+#converts julian date to numerical month 
+mean.month<-month(strptime(paste(mean.earlydate[,3]),format="%j")) 
+
+#adds arrivalMonth to mean.earlydate dataframe
+mean.earlydate$arrivalMonth = mean.month
+
+#by state
+write.csv(mean.earlydate, file = "C:/Users/lhamo/Documents/Biology/butterfly paper 2016/earlymonth.2016.csv")
+#by province
+write.csv(mean.earlydate, file = "C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.province.2016.csv")
+
+
  

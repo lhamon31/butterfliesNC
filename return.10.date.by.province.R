@@ -58,7 +58,7 @@ for (s in species){
   }
 }
 
-output<-na.omit(output) #note: many nas where there were not enough data
+output<-na.omit(output) #note: many many nas where there were not enough data
 write.csv(output,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydate.by.province.csv")
 
 #merge with tempdat 

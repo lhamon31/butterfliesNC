@@ -1,7 +1,7 @@
 #####LOADING SPATIAL DATA, CHECKING MAP PROJECTIONS
 
 ##x-values- temperature
-setwd("~/temp data/1990")
+setwd("~/Biology/butterfly paper 2016/temp data/1990")
 files=list.files()
 library(raster)
 
