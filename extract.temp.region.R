@@ -14,6 +14,19 @@ jan90<-raster(files[8])
 library(rgdal)
 counties=readOGR("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/boundarydata","COUNTYBOUNDARYSHORELINE")
 
+#add province IDs beforehand, if you so desired
+labels <-read.csv("C:/Users/lhamo/Documents/Biology/BIOL 692H/fixing.province.names.2.24.2016.csv")
+labels<- labels[ -c(1)]
+colnames(labels)<-c("NAME","province")
+counties<-merge(counties,labels, by.x=c("NAME"),by.y=c("NAME"), all.x = T, all.y = T)
+
+#aggregate shapefiles by province
+library(unionSpatialPolygons)
+libs <- c("maptools", "gridExtra")
+lapply(libs, require, character.only = TRUE)
+provinces<- unionSpatialPolygons(counties, id = counties$province)
+province <- unionSpatialPolygons(counties, counties$province)
+
 #check map projections
 counties_geog = spTransform(counties, crs(jan90))
 plot(jan90)
@@ -29,8 +42,24 @@ plot(counties_geog,add=T)
 
 #####READING IN ALL APPROPRIATE TEMP FILES AND FINDING NCTEMPMEAN
 
+##What this script does is it finds the tempmean for each species for each county for each year
+#and then afterwards I attach the province label 
+#and average the counties to get a province tempmean.
+##The walkback start is based on the same avg arrival month I use for the whole state
+#which means each each province assumes the same arrival month.
+##I don't like this v much and would like to use arrival months specified to each province
+#(stored in "earlymonth.province.2016.csv")
+#which I think means I need to aggregate the polygons 
+#or at least have em labelled with their province before I put em in the loop.
+##I'm not really sure how to do this neatly 
+#and it fundamentally changes how I calculate tempmean
+#so I'm just gonna press on with the old system
+#and get an opinion re what I actually want to do. 
+
+
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") #issue is possibly extra column. 
 species = unique(mean.earlydate$species)
+province=unique(mean.earlydate$province)
 years = 1990:2016
 
 
@@ -63,13 +92,14 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
   for(y in years){
     filenames.y<- paste("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y, "/PRISM_tmean_stable_4kmM2_", y, monthsText1, "_bil.bil", sep="")
     filenames.prevy <-filenames<- paste("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y-1, "/PRISM_tmean_stable_4kmM2_", y-1, monthsText2, "_bil.bil", sep="")
-    filenames = c(filenames.y, filenames.prevy)
+    filenames1 = c(filenames.y, filenames.prevy)
+    filenames <- filenames1[ !grepl("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/temp data/", y, "/PRISM_tmean_stable_4kmM2_", y, "_bil.bil", filenames1) ]
     temp_allmonths<-stack(filenames)
     tmean = calc(temp_allmonths, mean)
     tempmean = extract(tmean, counties_geog, fun=mean)
     tempoutput = data.frame(county = counties_geog@data$NAME, species = s, year = y, temp = tempmean)#check whether NAME is right here
     output = rbind(output, tempoutput)
-  } # end of year loop
+    } # end of year loop
 } # end of species loop
 
 # The output dataframe has 4 columns: the county name, species name, year, and mean temperature
