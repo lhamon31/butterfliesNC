@@ -92,7 +92,7 @@ for (s in species){
 
 #merge with tempdat 
 output<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlydates.thru.2016.csv")
-tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.12.months.2016.csv")
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.4.months.2016.csv")
 tempjulian = merge(tempdat, output, by.x = c('species','year'), by.y =c('species','year'), all.x = T, all.y = T)
 tempjulian <- tempjulian[ -c(3:4,6)]
 colnames(tempjulian)<-c("species","year","temp","earlydate")
@@ -103,4 +103,4 @@ tempjulian<-do.call(data.frame,lapply(tempjulian, function(x) replace(x, is.infi
 tempjulian<-na.omit(tempjulian) #removes NA values
 
 #create a csv that includes temperature and julian dates
-write.csv(tempjulian, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.12months.NC.2016.csv")
+write.csv(tempjulian, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.4months.NC.2016.csv")

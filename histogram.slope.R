@@ -1,11 +1,13 @@
 #LOAD IN DATA
 #merging the full dataset and the calculated earlydate/temp values (without province for now)
 library(plyr)
-setwd("~/Documents/Biology/BIOL 692H")
+setwd("~/Biology/butterfly paper 2016")
 
 #loading data. Any fulldat file may be substituted
 #full state
-alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.12months.NC.2016.csv")
+alldat<- alldat[ -c(1)]
+
 #regional
 alldat<-read.csv("C:/Users/lhamon/Documents/Documents/Biology/BIOL 692H/data/coast.fulldat.2.24.2016.csv")
 
@@ -45,7 +47,7 @@ species<-unique(alldat$species)
 
 for (s in species) {
   df<-alldat[alldat$species==s,]
-  lm.sub<-lm(df$julian~df$year)
+  lm.sub<-lm(df$earlydate~df$temp)
   slope<-summary(lm.sub)$coefficients[2,1]
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
@@ -73,19 +75,20 @@ histogram1<-ggplot(output, aes(x=slope))+
 #aes=aesthetics
 
 #slope proportions whole state, 4 months
-  #year
-    #40/56 negative, 30 significant, mean slope=-0.5056561
-#slope proportions whole state, 6 months
-  #year
-    #40/56 negative, 30 significant, mean slope=-0.5056561 #why are all the slopes coming out the same?
-#slope proportions whole state, 8 months
-  #year
-    #40/56 negative, 14 significant, mean slope= -0.5056561 #and there's such a drop in significance here. something's afoot
+  #year(since earlydate is same despite temp window, year results are the same)
+    #40/56 negative, 14 significant, mean slope=-0.5056561
   #temp
-    #37/56 negative, 5 significant, mean slope= -2.1601311
-#slope proportions whole state, 12 months #full temp script generates repeat years w/ different temp dates?
-  #year
-    #40/56 negative, 31 significant, mean slope=-0.5056561
+    #38/56 negative, 9 significant, mean slope=-3.003061
+#slope proportions whole state, 6 months
+  #temp
+    #32/56 negative, 6 significant, mean slope=-1.657351
+#slope proportions whole state, 8 months
+  #temp
+    #36/56 negative, 5 significant, mean slope=-2.029041
+#slope proportions whole state, 12 months 
+  #temp 
+    #41/56 negative, 6 significant, mean slope=-3.4333367
+    
     
 
 #slope proportions regional
