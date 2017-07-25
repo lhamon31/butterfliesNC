@@ -1,19 +1,22 @@
 ##perform ANCOVA to compare mountains, piedmont, coast
 library(plyr)
-setwd("~/Documents/Biology/butterfly paper 2016/data")
+setwd("~/Biology/butterfly paper 2016/graphs")
 
 #load in data
 mountains<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
 piedmont<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.csv")
 coast<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.csv")
 
-#eliminate species such that only the same species are used in each region
-#namely, the coast doesn't have "Boloria belladona"
-#and the mountains hates its one "Papilio palamedes"
-#not enough data for "Chlosyne nycteis" at coast
-#not enough data for "Lethe anthedon" at coast
-mountains<-mountains[-c(817),]
-coast<-coast[-c(290,291,618:623), ]
+#Modify the regional data to eliminate species that aren't the same b/w region
+#the coast is missing Meadow Fritillary, which tracks
+#run this to clean out these spp
+mountains<-mountains[ which( ! mountains$species %in% "Boloria bellona") , ]
+piedmont<-piedmont[ which( ! piedmont$species %in% "Boloria bellona") , ]
+#the mountains has very little data for Wallengrenia otho, Polities vibex, Callophrys gryneus (<6 years)
+#maybe run this in addition
+alldat<-alldat[ which( ! alldat$species %in% "Wallengrenia otho") , ]
+alldat<-alldat[ which( ! alldat$species %in% "Polites vibex") , ]
+alldat<-alldat[ which( ! alldat$species %in% "Callophrys gryneus") , ]
 
 ##Add in appropriate final indicator columns. 
 #I'm gonna try it 2-way first.
@@ -27,6 +30,7 @@ coast$I1<-rep(1,nrow(coast))
 #rbind the 2 data sets
 fulldat<-rbind(piedmont,mountains)
 fulldat<-rbind(piedmont,coast)
+fulldat<-rbind(mountains,coast)
 
 #create empty dataframe
 output = data.frame(species=character(),
@@ -39,7 +43,7 @@ species<-unique(fulldat$species)
 
 for (s in species) {
   df<-fulldat[fulldat$species==s,]
-  ancova.test<-lm (earlydate ~ I1 + year + year*I1 , data = df)
+  ancova.test<-lm (julian ~ I1 + year + year*I1 , data = df)
   lm.sub<-summary(ancova.test)
   beta2<-lm.sub$coefficients[3,1]
   p.beta2<-lm.sub$coefficients[3,4]
@@ -55,22 +59,32 @@ for (s in species) {
 #histograms of slopes
 #talking about it qualitatively
 
+#again, it says that [4,1] is out of bounds when you run mtns but it still reports it in the output 
+#so not sure why that is
+
 ok2<-subset(output, output$beta3<0)
 
 #number significant for slope (ß3)
 ok<-subset(output, output$p.beta3<0.05)
+
 #temperature
-#4/61 slopes significantly different b/w the mountains and the piedmont
-#2/61 slopes significantly different b/w the coast and the piedmont
+    #4/55 slopes significantly different b/w the mountains and the piedmont
+    #0/55 slopes significantly different b/w the coast and the piedmont
+    #2/55 slopes significantly different b/w the mountains and the piedmont
 #year
-#11/61 slopes significantly different b/w the mountains and the piedmont
-#7/61 slopes significantly different b/w the coast and the piedmont
+    #8/55 slopes significantly different b/w the mountains and the piedmont
+    #6/55 slopes significantly different b/w the coast and the piedmont
+    #4/55 slopes significantly different b/w the mountains and the piedmont
 
 binom.test(38, 63, 0.5, alternative="greater")
 
+#saving the output for the paper appendix
+write.csv(output,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/graphs/M.C.temp.compare.csv")
+
 #alternatively
+library(nlme)
 alldat<-rbind(piedmont,mountains,coast)
-fullmod<- lme(earlydate~province+year+temp+year:province+temp:province, random=~1|species, method="ML", data=alldat)
+fullmod<- lme(julian~province+year+temp+year:province+temp:province, random=~1|species, method="ML", data=alldat)
 summary(fullmod)
 anova(fullmod)
 

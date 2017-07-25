@@ -1,11 +1,11 @@
 #LOAD IN DATA
 #merging the full dataset and the calculated earlydate/temp values (without province for now)
 library(plyr)
-setwd("~/Biology/butterfly paper 2016")
+setwd("~/Biology/butterfly paper 2016/graphs")
 
 #loading data. Any fulldat file may be substituted
 #full state
-alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.4months.NC.2016.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.2016.csv")
 
 #regional
 alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
@@ -16,11 +16,11 @@ alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coa
 #the coast is missing Meadow Fritillary, which tracks
 #run this to clean out these spp
 alldat<-alldat[ which( ! alldat$species %in% "Boloria bellona") , ]
-#the mountains has very little data for Wallengrenia otho, Polities vibex, Callophrys gryneus (<6 years)
-#maybe run this in addition
-alldat<-alldat[ which( ! alldat$species %in% "Wallengrenia otho") , ]
-alldat<-alldat[ which( ! alldat$species %in% "Polites vibex") , ]
-alldat<-alldat[ which( ! alldat$species %in% "Callophrys gryneus") , ]
+        #the mountains has very little data for Wallengrenia otho, Polities vibex, Callophrys gryneus (<6 years)
+        #maybe run this in addition
+        alldat<-alldat[ which( ! alldat$species %in% "Wallengrenia otho") , ]
+        alldat<-alldat[ which( ! alldat$species %in% "Polites vibex") , ]
+        alldat<-alldat[ which( ! alldat$species %in% "Callophrys gryneus") , ]
 
 
 
@@ -29,15 +29,15 @@ alldat<-alldat[ which( ! alldat$species %in% "Callophrys gryneus") , ]
 #creating for loop (First I'll just try to get this to read the plots and put them in a pdf)
 
 species<-unique(alldat$species)
-pdf("year.julian.12month.2017.pdf",width=10, height=8)
+pdf("julian.temp.8months.pdf",width=10, height=8)
 par(mfrow=c(2,3))
 
 
 for (s in species) {
   df=alldat[alldat$species==s,]
-  lm.sub=lm(df$julian~df$year,xlab="year", ylab="julian", group=species)
-  plot(df$julian~df$year, xlab='year', ylab='Early Date (julian)')
-  abline(lm(df$julian~df$year))
+  lm.sub=lm(df$earlydate~df$temp,xlab="year", ylab="julian", group=species)
+  plot(df$earlydate~df$temp, xlab='year', ylab='Early Date (julian)')
+  abline(lm(df$earlydate~df$temp))
   legend("topright", bty="n", legend=paste("R2-",format(summary(lm.sub)$r.squared, digits=4)))
 }
 
@@ -52,7 +52,7 @@ species<-unique(alldat$species)
 
 for (s in species) {
   df<-alldat[alldat$species==s,]
-  lm.sub<-lm(df$earlydate~df$year)
+  lm.sub<-lm(df$julian~df$temp)
   slope<-summary(lm.sub)$coefficients[2,1] 
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
@@ -71,16 +71,17 @@ mean(output$slope)
 ok1<-subset(output, output$pvalue<0.05)
 ok2<-subset(output,output$slope<0)
 
-hist(output$slope, xlab="Slope (days/year)")
-abline(v=-2.160311,col="red",lwd=2)
+hist(output$slope, xlab="Slope (days/degree Celsius)", ylab="Julian date",main="")
+abline(v=-5.852375,col="red",lwd=2)
 
 library(ggplot2)
 
 histogram1<-ggplot(output, aes(x=slope))+
   geom_histogram(binwidth=0.5)+
-  abline(v=-2.160311,col="red",lwd=2)+
+  abline(v=-0.5056561,col="red",lwd=2)+
   theme_classic()+theme(axis.line=element_line(colour="grey80"),axis.text=element_text(size=18), axis.title=element_text(size=18,face="bold"), title=element_text(size=18,face="bold")) +
-  xlab("Slope (days/degrees celsius)")
+  xlab("Slope (days/year)")+
+  ylab("Julian date")
 #aes=aesthetics
 
 #whole state
