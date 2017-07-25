@@ -1,18 +1,29 @@
-##ESTIMATING FIRST DATE USING PIERIS 2014
+##ESTIMATING FIRST DATE USING glaucus 2014
 
 setwd("~/Biology/butterfly paper 2016/graphs")
 
-alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/Laura's data and scripts/NCbutterflies.65species.June2015.csv")
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/approximation_thru_2016.csv")
 
 #Changing column names to match the 2nd summary dataframe
-colnames(alldat)<-c("Cname", "species", "county", "observer", "number", "comments", "year", "month", "day", "dateCalc", "province", "coid", "julian", "voltinism",
+colnames(alldat)<-c("x","Cname", "species", "county", "observer", "number", "comments", "dateCalc", "year", "julian", "voltinism",
                     "voltinismnotes", "diettype", "dietbreadth", "dietnotes", "migratory", "overwinter")
 
-alldat<-alldat[c("species", "year", "number", "julian")]
+alldat<-alldat[c("year","species","number", "julian")]
 
-# subsetting out Pieris to test for changes in first date estimation by sample size
-pieris<- alldat[ which(alldat$species=='Pieris rapae' & alldat$year=="2014"),]
-pieris_j<-subset(pieris[,3:4])
+alldat <-subset(alldat, year > 1989)
+
+#finding the spp with the most observations in a particular year
+  #which species?
+    samplespp<-data.frame(table(alldat$species))
+    samplespp <- samplespp[order(-samplespp$Freq),] #papilio glaucus most observations
+  #which year?
+    pglaucus<-subset(alldat, species=="Papilio glaucus")
+    pglaucus<-data.frame(table(pglaucus$year))
+    pglaucus<-pglaucus[order(-pglaucus$Freq),] #most observations in 2006
+
+# subsetting out Papilio glaucus to test for changes in first date estimation by sample size
+glaucus<- alldat[ which(alldat$species=='Papilio glaucus' & alldat$year=="2006"),]
+glaucus_j<-subset(glaucus[,3:4])
 
 library(dplyr)
 #------------------------------------------------------------------------------------
@@ -22,7 +33,7 @@ mean.find <- function(dat, num) {
   out = out[order(out$julian, decreasing = F), ]
   out$cum = cumsum(out$number)
   #earliest date at which 'num' individuals have cumuluatively been observed
-  mindate = min(out$julian[out$cum >= 10])
+  mindate = min(out$julian[out$cum >= 25])
 }
 
 #""""10% individual
@@ -42,7 +53,7 @@ sample_sizes = c(10, 20, 50, 100, 150, 200, 250, 273)
 ss_output = c()
 for (s in sample_sizes) {
   earlydat= replicate(1000, {
-    mm<-mean.find(pieris_j, s)
+    mm<-mean.find(glaucus_j, s)
   })
   ss_output = cbind(ss_output, earlydat)
 }
@@ -90,7 +101,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=TRUE,
 }
 
 # adding a species column
-list2 <- rep("Pieris rapae",length(1000))
+list2 <- rep("glaucus rapae",length(1000))
 ss_output <- cbind(list2, ss_output)
 ss_output<-as.data.frame(ss_output)
 colnames(ss_output)<-c("species","c10","c20","c50","c100","c150","c200","c250","c273")
@@ -135,7 +146,7 @@ colnames(SE_273)<-c("species","N","julian","sd","se","ci","ss")
 mean.labels<-c("10", "20", "50", "100", "150", "200", "250","273")
 mean.labels<-as.numeric(mean.labels)
 mean.julian<-rbind(SE_10, SE_20, SE_50, SE_100, SE_150, SE_200,SE_250, SE_273)
-dat10th<-cbind(mean.julian, mean.labels)
+dat25p<-cbind(mean.julian, mean.labels)
 
 dat10th$proxy <- rep("10th",nrow(dat10th))
 dat25th$proxy <- rep("25th",nrow(dat25th))
@@ -154,6 +165,6 @@ plot<-ggplot(datf, aes(x=mean.labels, y=julian, group=proxy, colour=proxy))+
   theme(legend.text = element_text(size = 16))+
   xlab("Sample size") +
   ylab("Date (julian)")+
-  ylim(0,300)+
+  ylim(0,350)+
   theme_bw()+theme(panel.border = element_rect(colour=NA),axis.line=element_line(colour="grey80"), axis.text=element_text(size=16), axis.title=element_text(size=16,face="bold"), title=element_text(size=18,face="bold"))
 plot
