@@ -2,7 +2,6 @@
 #AND MERGING THIS WITH THE TEMPERATURE DATA
 #TO CREATE A NEW DOCUMENT WITH NEW PROXIES WITH WHICH TO RERUN MY ANALYSES
 setwd("~/Documents/Biology/Biol 692H")
-alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
 alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/approximation_thru_2016.csv")
 
 #Changing column names to match the 2nd summary dataframe

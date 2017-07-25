@@ -1,8 +1,8 @@
-##ESTIMATING FIRST DATE USING 10% DATE FOR PIERIS
+##ESTIMATING FIRST DATE USING PIERIS 2014
 
-setwd("~/Documents/Biology/BIOL 692H")
+setwd("~/Biology/butterfly paper 2016/graphs")
 
-alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/NCbutterflies.65species.June2015.csv")
+alldat <-read.csv("C:/Users/lhamon/Dropbox/NC butterfly project/Laura's data and scripts/NCbutterflies.65species.June2015.csv")
 
 #Changing column names to match the 2nd summary dataframe
 colnames(alldat)<-c("Cname", "species", "county", "observer", "number", "comments", "year", "month", "day", "dateCalc", "province", "coid", "julian", "voltinism",
@@ -15,112 +15,38 @@ pieris<- alldat[ which(alldat$species=='Pieris rapae' & alldat$year=="2014"),]
 pieris_j<-subset(pieris[,3:4])
 
 library(dplyr)
-
-#pulling a random sample
+#------------------------------------------------------------------------------------
+#pulling a random sample and extracting the date on which the 10th individual appears
 mean.find <- function(dat, num) {
   out <-dat[sample(1:nrow(dat), num, replace=FALSE), ] # randomly samples 'num' lines from the dataset
-  out = out[order(out$julian, decreasing = F), ]
-  out$cum = cumsum(out$number)
-  #earliest date at which 'num' individuals have cumuluatively been observed
-  mindate = min(out$julian[out$cum >= num])
-}
-
-
-mean.find.10<-function(dat) {
-  out <-sample(dat, 10, replace=TRUE) # randomingly samples 10 lines from the dataset
-  as.data.frame(out)
   out = out[order(out$julian, decreasing = F), ]
   out$cum = cumsum(out$number)
   #earliest date at which 'num' individuals have cumuluatively been observed
   mindate = min(out$julian[out$cum >= 10])
 }
 
-#function to sample 20 lines of the "Pieris 2014"subset and find the mean   
-mean.find.20<-function(dat) {
-  out <-sample(dat, 20, replace=TRUE) # randomingly samples 20 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[2:2] # subsets the 2nd line
+#""""10% individual
+mean.find = function(dat, num) {
+  out <-dat[sample(1:nrow(dat), num, replace=FALSE), ] # randomly samples 'num' lines from the dataset
+  out = out[order(out$julian, decreasing = F), ]
+  out$cum = cumsum(out$number)
+  out$cumpct = out$cum/sum(out$number)
+  #earliest date at which 'num' individuals have cumuluatively been observed
+  mindate = min(out$julian[out$cumpct >= 0.25])
 }
-
-#function to sample 50 lines of the "Pieris 2014"subset and find the mean   
-mean.find.50<-function(dat) {
-  out <-sample(dat, 50, replace=TRUE) # randomingly samples 50 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[5:5] # subsets the 5th line
-}
-
-#function to sample 100 lines of the "Pieris 2014"subset and find the mean   
-mean.find.100<-function(dat) {
-  out <-sample(dat, 100, replace=TRUE) # randomingly samples 100 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[10:10] # subsets 10th line
-}
-
-#function to sample 150 lines of the "Pieris 2014"subset and find the mean   
-mean.find.150<-function(dat) {
-  out <-sample(dat, 150, replace=TRUE) # randomingly samples 150 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[15:15] # subsets the 15th lines
-}
-
-#function to sample 200 lines of the "Pieris 2014"subset and find the mean   
-mean.find.200<-function(dat) {
-  out <-sample(dat, 200, replace=TRUE) # randomingly samples 200 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[20:20] # subsets the 20th lines
-}
-
-#function to sample 250 lines of the "Pieris 2014"subset and find the mean   
-mean.find.250<-function(dat) {
-  out <-sample(dat, 250, replace=TRUE) # randomingly samples 250 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[25:25] # subsets the 25th line
-}
-
-#function to sample the first 10% of the full "Pieris 2014"subset and find the mean   
-mean.find.273<-function(dat) {
-  out <-sample(dat, 273, replace=TRUE) # randomingly samples 200 lines from the dataset
-  out<-sort(out, decreasing=FALSE) # reorders the dataset in ascending order
-  out<-out[27:27] # subsets the 27th line
-}
+#---------------------------------------------------------------------------------------
 
 #perform this random sample 1000 times
-#repeat it 1000 times with lapply
-
-sample_sizes = c(10, 20, 50, 100)
+sample_sizes = c(10, 20, 50, 100, 150, 200, 250, 273)
 
 ss_output = c()
 for (s in sample_sizes) {
-  temp= replicate(1000, {
+  earlydat= replicate(1000, {
     mm<-mean.find(pieris_j, s)
   })
-  ss_output = cbind(ss_output, temp)
+  ss_output = cbind(ss_output, earlydat)
 }
 
-reps10<-replicate(1000, {
-  mm<-mean.find(pieris_j, 10)
-})
-reps20<-replicate(1000, {
-  mm<-mean.find.20(pieris_j)
-})
-reps50<-replicate(1000, {
-  mm<-mean.find.50(pieris_j)
-})
-reps100<-replicate(1000, {
-  mm<-mean.find.100(pieris_j)
-})
-reps150<-replicate(1000, {
-  mm<-mean.find.150(pieris_j)
-})
-reps200<-replicate(1000, {
-  mm<-mean.find.200(pieris_j)
-})
-reps250<-replicate(1000, {
-  mm<-mean.find.250(pieris_j)
-})
-reps273<-replicate(1000, {
-  mm<-mean.find.273(pieris_j)
-})
 
 # detach dplyr to load plyr and run the SummarySE package
 detach("package:dplyr", unload=TRUE)
@@ -163,59 +89,71 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=TRUE,
   return(datac)
 }
 
-# Adding species name back to each subset list to use SummarySE function
-sciName<-rep("pieris",1000)
-try10<-as.data.frame(cbind(reps10, sciName))
-try20<-as.data.frame(cbind(reps20, sciName))
-try50<-as.data.frame(cbind(reps50, sciName))
-try100<-as.data.frame(cbind(reps100, sciName))
-try150<-as.data.frame(cbind(reps150, sciName))
-try200<-as.data.frame(cbind(reps200, sciName))
-try250<-as.data.frame(cbind(reps250, sciName))
-try273<-as.data.frame(cbind(reps273, sciName))
+# adding a species column
+list2 <- rep("Pieris rapae",length(1000))
+ss_output <- cbind(list2, ss_output)
+ss_output<-as.data.frame(ss_output)
+colnames(ss_output)<-c("species","c10","c20","c50","c100","c150","c200","c250","c273")
 
+#convert columns to numeric
+ss_output$c10<-as.numeric(as.character(ss_output$c10))
+ss_output$c20<-as.numeric(as.character(ss_output$c20))
+ss_output$c50<-as.numeric(as.character(ss_output$c50))
+ss_output$c100<-as.numeric(as.character(ss_output$c100))
+ss_output$c150<-as.numeric(as.character(ss_output$c150))
+ss_output$c200<-as.numeric(as.character(ss_output$c200))
+ss_output$c250<-as.numeric(as.character(ss_output$c250))
+ss_output$c273<-as.numeric(as.character(ss_output$c273))
 
-#converting the reps10 column to the correct format
-try10$julian <- as.numeric(as.character(try10$reps10))
-try20$julian <- as.numeric(as.character(try20$reps20))
-try50$julian <- as.numeric(as.character(try50$reps50))
-try100$julian <- as.numeric(as.character(try100$reps100))
-try150$julian <- as.numeric(as.character(try150$reps150))
-try200$julian <- as.numeric(as.character(try200$reps200))
-try250$julian <- as.numeric(as.character(try250$reps250))
-try273$julian <- as.numeric(as.character(try273$reps273))
-
-# using summarySE function to calculate mean of the 1000 means from each subset and create SE's for plotting
-SE_10<-summarySE(try10, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_20<-summarySE(try20, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_50<-summarySE(try50, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_100<-summarySE(try100, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_150<-summarySE(try150, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_200<-summarySE(try200, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_250<-summarySE(try250, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-SE_273<-summarySE(try273, measurevar="julian", groupvars=c("sciName"), na.rm=T)
-
+# using summarySE function to calculate mean of the 1000 means from each subset and create standard deviations for plotting
+SE_10<-summarySE(ss_output, measurevar="c10", groupvars=c("species"))
+SE_10[,"ss"]  <- c("10")
+colnames(SE_10)<-c("species","N","julian","sd","se","ci","ss")
+SE_20<-summarySE(ss_output, measurevar="c20", groupvars=c("species"))
+SE_20[,"ss"]  <- c("20")
+colnames(SE_20)<-c("species","N","julian","sd","se","ci","ss")
+SE_50<-summarySE(ss_output, measurevar="c50", groupvars=c("species"))
+SE_50[,"ss"]  <- c("50")
+colnames(SE_50)<-c("species","N","julian","sd","se","ci","ss")
+SE_100<-summarySE(ss_output, measurevar="c100", groupvars=c("species"))
+SE_100[,"ss"]  <- c("100")
+colnames(SE_100)<-c("species","N","julian","sd","se","ci","ss")
+SE_150<-summarySE(ss_output, measurevar="c150", groupvars=c("species"))
+SE_150[,"ss"]  <- c("150")
+colnames(SE_150)<-c("species","N","julian","sd","se","ci","ss")  
+SE_200<-summarySE(ss_output, measurevar="c200", groupvars=c("species"))
+SE_200[,"ss"]  <- c("200")
+colnames(SE_200)<-c("species","N","julian","sd","se","ci","ss")
+SE_250<-summarySE(ss_output, measurevar="c250", groupvars=c("species"))
+SE_250[,"ss"]  <- c("250")
+colnames(SE_250)<-c("species","N","julian","sd","se","ci","ss")
+SE_273<-summarySE(ss_output, measurevar="c273", groupvars=c("species"))
+SE_273[,"ss"]  <- c("273")
+colnames(SE_273)<-c("species","N","julian","sd","se","ci","ss")
 
 # binding means into one object
 mean.labels<-c("10", "20", "50", "100", "150", "200", "250","273")
 mean.labels<-as.numeric(mean.labels)
 mean.julian<-rbind(SE_10, SE_20, SE_50, SE_100, SE_150, SE_200,SE_250, SE_273)
-dat<-cbind(mean.julian, mean.labels)
+dat10th<-cbind(mean.julian, mean.labels)
+
+dat10th$proxy <- rep("10th",nrow(dat10th))
+dat25th$proxy <- rep("25th",nrow(dat25th))
+dat10p$proxy<-rep("10 percent",nrow(dat10p))
+dat25p$proxy<-rep("25 percent",nrow(dat25p))
+datf<-rbind(dat10th,dat25th,dat10p,dat25p)
 
 # graphing estimated first date by different sample sizes
 library(ggplot2)
-plot<-ggplot(dat, aes(x=mean.labels, y=julian))+
-  geom_point()+
+plot<-ggplot(datf, aes(x=mean.labels, y=julian, group=proxy, colour=proxy))+
+  geom_line()+
+  geom_point(size=3)+
   geom_errorbar(aes(ymin=julian-sd, ymax=julian+sd),width=.1)+
+  theme(legend.position="none")+
   theme(legend.title = element_text(size=16, face="bold")) +
   theme(legend.text = element_text(size = 16))+
-  ggtitle("First date calculated by 10 percent date per sample size for Pieris 2014")+
   xlab("Sample size") +
   ylab("Date (julian)")+
   ylim(0,300)+
   theme_bw()+theme(panel.border = element_rect(colour=NA),axis.line=element_line(colour="grey80"), axis.text=element_text(size=16), axis.title=element_text(size=16,face="bold"), title=element_text(size=18,face="bold"))
 plot
-
-abline(h=95.117,col="red")
-
-
