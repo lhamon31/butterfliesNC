@@ -1,7 +1,7 @@
 #merging the full dataset and the calculated earlydate/temp values (without province for now)
 setwd("~/Documents/Biology/butterfly paper 2016")
 library(plyr)
-tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8.months.NC.2016.csv")
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.2016.csv")
 tempdat<-na.omit(tempdat)
 
 #merge 2: adding the variables in 
@@ -15,6 +15,7 @@ dat<-merge(variables2,tempdat, by.x=c("species"),by.y=c('species'), all.x = T, a
 #setting voltinism as a factor
 dat$voltinism<-as.factor(dat$voltinism)
 
+dat<-na.omit(dat)
 
 ## LOOKING FOR YEAR EFFECT ACROSS ENTIRE DATASET (aka alldat) ##
 # Required packages
@@ -22,9 +23,16 @@ library(nlme)
 
 # defining full model (=most complex) to consider
 fullmod<- lme(julian~year+temp+voltinism+diettype+dietbreadth+overwinter+year:voltinism+year:diettype+year:dietbreadth+year:overwinter, random=~1|species, method="ML", data=dat)
-fullmod<- lme(julian~year+temp+voltinism+diettype+dietbreadth+overwinter+year:voltinism+year:diettype+year:dietbreadth+year:overwinter+temp:voltinism+temp:diettype+temp:dietbreadth+temp:overwinter, random=~1|species, method="ML", data=dat)
+fullmod<- lme(earlydate~year+temp+voltinism+diettype+dietbreadth+overwinter+year:voltinism+year:diettype+year:dietbreadth+year:overwinter+temp:voltinism+temp:diettype+temp:dietbreadth+temp:overwinter, random=~1|species, method="ML", data=dat)
+fullmod<-lme(temp*overwinter) #(shorthand)
 summary(fullmod)
 anova(fullmod)
+
+#example: year:diettype: response different for diff diettypes for diff years
+#f-value: what does it mean? 
+#species is a random variable, everything else is fixed effects. report f and df
+#F subscript df, p=whatever
+#don't need to report non-significance w/ values (didn't have an effect)
 
 plot.design(julian~year+voltinism+diettype+dietbreadth+overwinter,data=dat)
 
@@ -36,14 +44,20 @@ plot.design(julian~year+voltinism+diettype+dietbreadth+overwinter,data=dat)
 library(MuMIn)
 
 #fit all subsets of full model
-fullmod_dredge<-dredge(fullmod)
+fullmod_dredge<-dredge(fullmod) #take every combination and say which is the best statistically
+#lowest AIC is best, and it's relative to the model
+#top is the best model is the one dredge says is the best that you could run
+#julian~volt+volt:year+diettype (could run the top two models and take things in and out and remove a factor or two 
+#and compare them with them with a chi-square. if significant you can't drop what you dropped)
+
 
 #fit all subsets of full model
-list.good<-get.models(fullmod_dredge, subset = delta < 7)
-model1<-model.avg(list.good)
+list.good<-get.models(fullmod_dredge, subset = delta < 7) #get the top few
+model1<-model.avg(list.good) #goes through good models and sees how many times a 
 summary(model1) #returns relative 
-coef(model1)
-importance(model1)
+coef(model1) #maybe less or more?
+importance(model1) #number of models that that thing is important in with a proportion
+#nail temp thing down and rerun with comparison of model with temp there or removed 
 
 #used linear and mixed:effects
 #temp, voltinism, year, overwintering, diettype

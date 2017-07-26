@@ -148,6 +148,8 @@ mean.labels<-as.numeric(mean.labels)
 mean.julian<-rbind(SE_10, SE_20, SE_50, SE_100, SE_150, SE_200,SE_250, SE_273)
 dat25p<-cbind(mean.julian, mean.labels)
 
+dat25th <- dat25th[-1, ] #remove first row of this one (sample size too small)
+
 dat10th$proxy <- rep("10th",nrow(dat10th))
 dat25th$proxy <- rep("25th",nrow(dat25th))
 dat10p$proxy<-rep("10 percent",nrow(dat10p))
@@ -165,6 +167,6 @@ plot<-ggplot(datf, aes(x=mean.labels, y=julian, group=proxy, colour=proxy))+
   theme(legend.text = element_text(size = 16))+
   xlab("Sample size") +
   ylab("Date (julian)")+
-  ylim(0,350)+
+  ylim(0,300)+
   theme_bw()+theme(panel.border = element_rect(colour=NA),axis.line=element_line(colour="grey80"), axis.text=element_text(size=16), axis.title=element_text(size=16,face="bold"), title=element_text(size=18,face="bold"))
 plot
