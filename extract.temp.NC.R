@@ -29,6 +29,8 @@ plot(NC_geog,add=T)
 #####READING IN ALL APPROPRIATE TEMP FILES AND FINDING NCTEMPMEAN
 
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") 
+#for adjusted months use 
+mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/arrivalmonth.2016.csv") 
 species = unique(mean.earlydate$species)
 years = 1990:2016
 
@@ -75,6 +77,8 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # The output dataframe has 4 columns: the county name, species name, year, and mean temperature
 # for that 8-month window for that year.
 
+#for output from adjusted arrival months
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.8.months.adjusted.2016.csv")
 #save output from for loop
 write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.8.months.2016.csv")
 

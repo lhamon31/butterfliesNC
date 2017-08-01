@@ -6,6 +6,8 @@ setwd("~/Biology/butterfly paper 2016/graphs")
 #loading data. Any fulldat file may be substituted
 #full state
 alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.2016.csv")
+#fullstate adjusted
+alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.adjusted.2016.csv") #adjusted
 
 #regional
 alldat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
@@ -52,7 +54,7 @@ species<-unique(alldat$species)
 
 for (s in species) {
   df<-alldat[alldat$species==s,]
-  lm.sub<-lm(df$julian~df$temp)
+  lm.sub<-lm(df$earlydate~df$temp)
   slope<-summary(lm.sub)$coefficients[2,1] 
   rsquared<-summary(lm.sub)$r.squared
   pvalue<-summary(lm.sub)$coefficients[2,4]
@@ -96,6 +98,8 @@ histogram1<-ggplot(output, aes(x=slope))+
     #8 months
       #temp
         #36/56 negative, 5 significant, mean slope=-2.029041
+      #temp w/ adjusted temp windows (start at previous month of early date is in early half of month)
+        #35/56 negative, 5 significant, mean slope=-1.618129
     #12 months 
       #temp 
         #41/56 negative, 6 significant, mean slope=-3.4333367

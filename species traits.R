@@ -2,6 +2,10 @@
 setwd("~/Documents/Biology/butterfly paper 2016")
 library(plyr)
 tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.2016.csv")
+#adjusted
+tempdat<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/fulldat.8months.NC.adjusted.2016.csv") #adjusted
+#subsetted
+tempdat<-subset(tempdat,species=="Nymphalis antiopa")
 tempdat<-na.omit(tempdat)
 
 #merge 2: adding the variables in 
