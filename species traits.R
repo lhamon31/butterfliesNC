@@ -38,7 +38,7 @@ anova(fullmod)
 #F subscript df, p=whatever
 #don't need to report non-significance w/ values (didn't have an effect)
 
-plot.design(julian~year+voltinism+diettype+dietbreadth+overwinter,data=dat)
+plot.design(earlydate~year+voltinism+diettype+dietbreadth+overwinter,data=dat)
 
 #in the anova of the full mod,
 #year (p<0.0001), temp (p<0.0001), voltinism (p=0.0024), diettype (p=0.0140), year:voltinism (P=0.0127) were significant

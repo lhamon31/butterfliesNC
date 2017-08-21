@@ -57,6 +57,8 @@ plot(counties_geog,add=T)
 
 
 mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/earlymonth.2016.csv") #issue is possibly extra column. 
+#adjusted version
+mean.earlydate<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/arrivalmonth.2016.csv")
 species = unique(mean.earlydate$species)
 province=unique(mean.earlydate$province)
 years = 1990:2016
@@ -105,7 +107,7 @@ for (s in species) { # add a species loop to pull out species-specific arrival m
 # for that 8-month window for that year.
 
 #save output from for loop
-write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.by.province.8.months.csv")
+write.csv(output, file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/tempmean.by.province.8.months.adjusted.csv")
 
 #merge with province labels
     #an issue- in the temperature script, it returns county names in shapefile fomrat, ie "ORANGE" 
