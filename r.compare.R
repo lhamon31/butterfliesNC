@@ -17,6 +17,6 @@ alldat$temp.better<-ifelse(abs(alldat$T.r)>abs(alldat$Y.r),"Y","N")
 
 table(alldat$temp.better)
 
-#year is a better predictor in 36/56 instances
+#year is a 'better predictor' in 36/56 spp
 #potentially something other than temp an important predictor of arrival
   #photoperiod, traits, etc. 
