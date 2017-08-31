@@ -163,9 +163,9 @@ colnames(C.tempjulian)<-c("species","year","province","temp","X","province.y","j
 C.tempjulian<-C.tempjulian[c("species","year","province","temp","julian")]
 
 #save as csv for each region
-write.csv(M.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
-write.csv(P.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.csv")
-write.csv(C.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.csv")
+write.csv(M.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.adjusted.csv")
+write.csv(P.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.adjusted.csv")
+write.csv(C.tempjulian,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.adjusted.csv")
 
 
 

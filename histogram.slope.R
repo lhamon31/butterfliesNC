@@ -74,9 +74,7 @@ ok1<-subset(output, output$pvalue<0.05)
 ok2<-subset(output,output$slope<0)
 
 hist(output$slope, xlab="Slope (days/degree Celsius)", ylab="Julian date",main="")
-abline(v=-5.852375,col="red",lwd=2)
-
-library(ggplot2)
+abline(v=-0.5056561,col="red",lwd=2)
 
 histogram1<-ggplot(output, aes(x=slope))+
   geom_histogram(binwidth=0.5)+
@@ -84,7 +82,21 @@ histogram1<-ggplot(output, aes(x=slope))+
   theme_classic()+theme(axis.line=element_line(colour="grey80"),axis.text=element_text(size=18), axis.title=element_text(size=18,face="bold"), title=element_text(size=18,face="bold")) +
   xlab("Slope (days/year)")+
   ylab("Julian date")
-#aes=aesthetics
+
+#a new better histogram
+library(ggplot2)
+    
+    #year
+    p <- ggplot(year.output, aes(year.output$slope)) 
+    p <- p + geom_histogram(breaks=seq(-2.5, 2.5, by=0.5),fill="grey",col="darkgrey")
+    p <- p + xlab("Slope (days/year)") + ylab("Julian date") 
+    p <- p + geom_vline(xintercept = -0.5056561, col="red", lwd=1)
+    
+    #temp
+    p <- ggplot(temp.output, aes(temp.output$slope)) 
+    p <- p + geom_histogram(breaks=seq(-20, 20, by=3),fill="grey",col="darkgrey")
+    p <- p + xlab("Slope (days/degree Celsius)") + ylab("Julian date") 
+    p <- p + geom_vline(xintercept = -1.618129, col="red", lwd=1)
 
 #whole state
     #4 months

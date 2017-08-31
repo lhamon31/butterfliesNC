@@ -3,27 +3,42 @@ library(plyr)
 setwd("~/Biology/butterfly paper 2016/graphs")
 
 #load in data
-mountains<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.csv")
-piedmont<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.csv")
-coast<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.csv")
+mountains<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/mountain.fulldat.adjusted.csv")
+piedmont<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/piedmont.fulldat.adjusted.csv")
+coast<-read.csv("C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.fulldat.adjusted.csv")
 
 #Modify the regional data to eliminate species that aren't the same b/w region
 #the coast is missing Meadow Fritillary, which tracks
 #run this to clean out these spp
 mountains<-mountains[ which( ! mountains$species %in% "Boloria bellona") , ]
 piedmont<-piedmont[ which( ! piedmont$species %in% "Boloria bellona") , ]
-#the mountains has very little data for Wallengrenia otho, Polities vibex, Callophrys gryneus (<6 years)
+#the mountains has very little data for Wallengrenia otho, Polities vibex, Callophrys gryneus, Papilio palamedes (<6 years)
+#coast has few data for chlosyne nycteis
 #maybe run this in addition
-alldat<-alldat[ which( ! alldat$species %in% "Wallengrenia otho") , ]
-alldat<-alldat[ which( ! alldat$species %in% "Polites vibex") , ]
-alldat<-alldat[ which( ! alldat$species %in% "Callophrys gryneus") , ]
+mountains<-mountains[ which( ! mountains$species %in% "Wallengrenia otho") , ]
+mountains<-mountains[ which( ! mountains$species %in% "Polites vibex") , ]
+mountains<-mountains[ which( ! mountains$species %in% "Callophrys gryneus") , ]
+mountains<-mountains[ which( ! mountains$species %in% "Papilio palamedes") , ]
+mountains<-mountains[ which( ! mountains$species %in% "Chlosyne nycteis") , ]
+
+piedmont<-piedmont[ which( ! piedmont$species %in% "Wallengrenia otho") , ]
+piedmont<-piedmont[ which( ! piedmont$species %in% "Polites vibex") , ]
+piedmont<-piedmont[ which( ! piedmont$species %in% "Callophrys gryneus") , ]
+piedmont<-piedmont[ which( ! piedmont$species %in% "Papilio palamedes") , ]
+piedmont<-piedmont[ which( ! piedmont$species %in% "Chlosyne nycteis") , ]
+
+coast<-coast[ which( ! coast$species %in% "Wallengrenia otho") , ]
+coast<-coast[ which( ! coast$species %in% "Polites vibex") , ]
+coast<-coast[ which( ! coast$species %in% "Callophrys gryneus") , ]
+coast<-coast[ which( ! coast$species %in% "Papilio palamedes") , ]
+coast<-coast[ which( ! coast$species %in% "Chlosyne nycteis") , ]
 
 ##Add in appropriate final indicator columns. 
 #I'm gonna try it 2-way first.
 #piedmont: 0
 piedmont$I1 <- rep(0,nrow(piedmont))
 #mountains: 1
-mountains$I1 <- rep(1,nrow(mountains))
+mountains$I1 <- rep(0,nrow(mountains))
 #coast:1
 coast$I1<-rep(1,nrow(coast))
 
@@ -43,7 +58,7 @@ species<-unique(fulldat$species)
 
 for (s in species) {
   df<-fulldat[fulldat$species==s,]
-  ancova.test<-lm (julian ~ I1 + year + year*I1 , data = df)
+  ancova.test<-lm (julian ~ I1 + temp + temp*I1 , data = df)
   lm.sub<-summary(ancova.test)
   beta2<-lm.sub$coefficients[3,1]
   p.beta2<-lm.sub$coefficients[3,4]
@@ -59,8 +74,8 @@ for (s in species) {
 #histograms of slopes
 #talking about it qualitatively
 
-#again, it says that [4,1] is out of bounds when you run mtns but it still reports it in the output 
-#so not sure why that is
+#saving the output
+write.csv(output,file="C:/Users/lhamo/Documents/Biology/butterfly paper 2016/data/coast.compare.csv")
 
 ok2<-subset(output, output$beta3<0)
 
@@ -68,13 +83,18 @@ ok2<-subset(output, output$beta3<0)
 ok<-subset(output, output$p.beta3<0.05)
 
 #temperature
-    #4/55 slopes significantly different b/w the mountains and the piedmont
-    #0/55 slopes significantly different b/w the coast and the piedmont
-    #2/55 slopes significantly different b/w the mountains and the piedmont
+    #3/50 slopes significantly different b/w the mountains and the piedmont
+        #negative and more in mountains
+    #0/50 slopes significantly different b/w the coast and the piedmont
+    #1/50 slopes significantly different b/w the mountains and the piedmont
+        #more negative and more in mountains
 #year
-    #8/55 slopes significantly different b/w the mountains and the piedmont
-    #6/55 slopes significantly different b/w the coast and the piedmont
-    #4/55 slopes significantly different b/w the mountains and the piedmont
+    #12/50 slopes significantly different b/w the mountains and the piedmont
+        #negative and more in mountains
+    #7/50 slopes significantly different b/w the coast and the piedmont
+        #6/7 more negative and more in coast
+    #6/50 slopes significantly different b/w the mountains and the coast
+        #4/6 more negative and more in mountains
 
 binom.test(38, 63, 0.5, alternative="greater")
 
